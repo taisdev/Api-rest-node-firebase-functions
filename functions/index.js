@@ -22,6 +22,21 @@ app.get("/", async (req, res) => {
   res.status(200).send(JSON.stringify(users));
 });
 
+app.get("/:email", async (req, res) => {
+  const snapshot = await admin.firestore().collection("users")
+      .where("email", "==", req.params.email).get();
+
+  const users = [];
+  snapshot.forEach((doc) => {
+    const id = doc.id;
+    const data = doc.data();
+
+    users.push({id, ...data});
+  });
+
+  res.status(200).send(JSON.stringify(users));
+});
+
 app.get("/:id", async (req, res) => {
   const snapshot = await admin.firestore()
       .collection("users").doc(req.params.id).get();
